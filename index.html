@@ -2,164 +2,107 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>Senin İçin... (Nihai Sürüm)</title>
+  <title>Bizim İçin... (Sonsuz Döngü)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://use.typekit.net/trt3ngp.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Dancing+Script:wght@600&family=Space+Mono&display=swap');
     
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { overflow: hidden; background: #050003; } /* Daha koyu, daha derin */
+    html, body { overflow: hidden; background: #030002; } 
     body { -webkit-font-smoothing: antialiased; color: #ffdada; }
 
     .webgl { position: fixed; width: 100vw; height: 100vh; top: 0; left: 0; outline: none; z-index: 1; }
     
-    /* Üst Başlık (Premium His İçin Neon Efekt) */
     .h1text { 
       font-family: "Lilita One", sans-serif; 
-      font-weight: 100; 
-      font-size: 2.2rem; 
+      font-size: 1.8rem; 
       position: absolute; 
-      top: 5vh; 
+      top: 4vh; 
       width: 100%; 
       text-align: center; 
       z-index: 10; 
-      letter-spacing: 4px;
+      letter-spacing: 5px;
       color: #ff89aC;
-      text-shadow: 0 0 10px #ff89aC, 0 0 20px #ff89aC, 0 0 30px #ff89aC;
-      opacity: 0.8;
+      text-shadow: 0 0 15px #ff89aC;
+      opacity: 0.6;
     }
 
-    /* İnteraktif Özür Notu Kutusu (Typewriter Efekti İçin 'Space Mono' Fontu) */
     .message-container {
       position: absolute;
-      bottom: 12vh;
+      bottom: 8vh;
       left: 50%;
       transform: translateX(-50%);
-      width: 85%;
-      max-width: 500px;
-      background: rgba(10, 0, 5, 0.6);
-      backdrop-filter: blur(15px);
-      padding: 2rem;
-      border-radius: 25px;
-      border: 1px solid rgba(255, 137, 172, 0.3);
+      width: 80%;
+      max-width: 450px;
+      background: rgba(10, 0, 5, 0.4);
+      backdrop-filter: blur(20px);
+      padding: 1.8rem;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 137, 172, 0.2);
       text-align: center;
       z-index: 105;
-      opacity: 0; /* Başlangıçta gizli, müzikle gelecek */
-      transition: opacity 2s ease-in-out;
-      box-shadow: 0 0 40px rgba(255, 137, 172, 0.2);
+      opacity: 0;
+      transition: opacity 2s ease;
     }
 
     .message-container h2 {
       font-family: 'Dancing Script', cursive;
-      font-size: 2.8rem;
-      margin-bottom: 1rem;
+      font-size: 2.4rem;
       color: #ffb3c6;
-      text-shadow: 0 0 10px rgba(255, 179, 198, 0.6);
+      margin-bottom: 0.8rem;
     }
 
-    .message-container p {
-      font-family: 'Space Mono', monospace; /* Daktilo hissi için */
-      line-height: 1.6;
-      font-size: 1rem;
+    #typewriter {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.95rem;
       color: #ffe5ec;
-      font-weight: 300;
-      white-space: pre-wrap; /* Satır satır yazılması için */
+      line-height: 1.5;
     }
 
-    /* Arka Plan Süslemesi (Daha Hafif) */
-    body::before { content: ""; position: absolute; border: 2px solid #ff89aC; inset: 1.5rem; z-index: 100; pointer-events: none; opacity: 0.2; }
-    
-    /* Geliştirilmiş Buton */
+    /* Anı Baloncukları Stili */
+    .memory-bubble {
+      position: absolute;
+      font-family: 'Dancing Script', cursive;
+      color: #ff89aC;
+      font-size: 1.5rem;
+      pointer-events: none;
+      z-index: 102;
+      text-shadow: 0 0 10px rgba(255, 137, 172, 0.8);
+      white-space: nowrap;
+    }
+
     button { 
       position: absolute; 
       inset: 0; 
       margin: auto; 
-      height: 12vh; 
-      width: 12vh; 
-      background: rgba(255, 137, 172, 0.1); 
+      height: 10vh; 
+      width: 10vh; 
+      background: transparent; 
       border-radius: 50%;
-      color: inherit; 
       border: 2px solid #ff89aC; 
       cursor: pointer; 
       z-index: 110; 
-      transition: all 0.4s ease-out;
-      box-shadow: 0 0 20px rgba(255, 137, 172, 0.3);
+      transition: 0.4s;
+      box-shadow: 0 0 20px rgba(255, 137, 172, 0.2);
     }
-    button:hover { background: rgba(255, 137, 172, 0.2); transform: scale(1.1); box-shadow: 0 0 30px rgba(255, 137, 172, 0.5); }
-    svg { width: 4vh; color: #ff89aC; }
+    button:hover { transform: scale(1.1); box-shadow: 0 0 40px #ff89aC; }
+    svg { width: 3.5vh; color: #ff89aC; }
   </style>
 </head>
 <body>
 
   <canvas class="webgl"></canvas>
-  <h1 class="h1text">THIS IS FOR YOU...</h1>
+  <h1 class="h1text">ETERNAL CRYSTAL</h1>
 
   <div class="message-container" id="note">
     <h2>Özür Dilerim...</h2>
     <p id="typewriter"></p>
   </div>
 
-  <button id="play-music" type="button">
+  <button id="start-btn" type="button">
     <svg fill="currentColor" viewBox="0 0 512 512"><path d="M470.38 1.51L150.41 96A32 32 0 0 0 128 126.51v261.41A139 139 0 0 0 96 384c-53 0-96 28.66-96 64s43 64 96 64 96-28.66 96-64V214.32l256-75v184.61a138.4 138.4 0 0 0-32-3.93c-53 0-96 28.66-96 64s43 64 96 64 96-28.65 96-64V32a32 32 0 0 0-41.62-30.49z"/></svg>
   </button>
-
-  <script type="x-shader/x-vertex" id="vertexShader">
-    #define M_PI 3.14159265358979323846
-    uniform float uTime; uniform float uSize; attribute float aScale; attribute vec3 aColor; attribute float random; attribute float aSpeed; varying vec3 vColor;
-    void main() {
-      float sign = 2.0 * (step(random, 0.5) - 0.5);
-      float t = sign * mod(-uTime * aSpeed * 0.005 + 10.0 * aSpeed * aSpeed, M_PI);
-      float a = pow(t, 2.0) * pow((t - sign * M_PI), 2.0);
-      float radius = 0.15;
-      vec3 myOffset = vec3(
-        radius * 16.0 * pow(sin(t), 3.0),
-        radius * (13.0 * cos(t) - 5.0 * cos(2.0 * t) - 2.0 * cos(3.0 * t) - cos(4.0 * t)),
-        0.15 * a * (random - 0.5)
-      );
-      vec4 modelPosition = modelMatrix * vec4(myOffset, 1.0);
-      vec4 viewPosition = viewMatrix * modelPosition;
-      viewPosition.xyz += position * aScale * uSize * pow(a, 0.5) * 1.5; /* Daha geniş, daha akışkan */
-      gl_Position = projectionMatrix * viewPosition;
-      vColor = aColor;
-    }
-  </script>
-
-  <script type="x-shader/x-fragment" id="fragmentShader">
-    varying vec3 vColor;
-    void main() {
-      float strength = 1.0 - (distance(gl_PointCoord, vec2(0.5)) * 2.0); // Noktasal parıltı (Nokta başına)
-      strength = pow(strength, 3.0);
-      gl_FragColor = vec4(vColor, strength);
-    }
-  </script>
-
-  <script type="x-shader/x-vertex" id="vertexShader1">
-    #define M_PI 3.14159265358979323846
-    uniform float uTime; attribute float aScale; attribute vec3 aColor; attribute float phi; attribute float random; attribute float random1; varying vec3 vColor;
-    void main() {
-      float t = mod((-uTime + 100.0) * 0.06 * random1 + random * 2.0 * M_PI , 2.0 * M_PI);
-      vec3 myOffset = vec3(
-        6.0 * cos(phi * t),
-        1.8 * (t - M_PI),
-        4.0 * sin(phi * t / t)
-      );
-      vec4 modelPosition = modelMatrix * vec4(myOffset, 1.0);
-      vec4 viewPosition = viewMatrix * modelPosition;
-      viewPosition.xyz += position * aScale * 0.3; /* Daha küçük, daha derin */
-      gl_Position = projectionMatrix * viewPosition;
-      vColor = aColor;
-    }
-  </script>
-
-  <script type="x-shader/x-fragment" id="fragmentShader1">
-    varying vec3 vColor;
-    void main() {
-      float strength = 1.0 - (distance(gl_PointCoord, vec2(0.5, .65)) * 2.0); // Noktasal parıltı (Dış saha)
-      strength = pow(strength, 3.0);
-      gl_FragColor = vec4(vColor, strength * 0.5); /* Daha sönük, derinlik için */
-    }
-  </script>
 
   <script type="module">
     import * as THREE from "https://cdn.skypack.dev/three@0.135.0";
@@ -169,87 +112,81 @@
     import { RenderPass } from "https://cdn.skypack.dev/three@0.135.0/examples/jsm/postprocessing/RenderPass";
     import { UnrealBloomPass } from "https://cdn.skypack.dev/three@0.135.0/examples/jsm/postprocessing/UnrealBloomPass";
 
+    const memories = ["Gülüşün", "Antalya", "İlk Günümüz", "Gözlerin", "Hayallerimiz", "Sonsuzluk", "Affet"];
+
     class World {
       constructor({ canvas }) {
         this.scene = new THREE.Scene();
+        this.scene.fog = new THREE.FogExp2(0x050003, 0.15); // Nebula/Sis Etkisi
         this.clock = new THREE.Clock();
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-        this.camera.position.z = 4.5;
+        this.camera.position.z = 5;
         this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         
-        // Ses Analizörü (Hassaslaştırıldı)
-        this.data = 0;
-        
-        // Fare Etkileşimi İçin Parametreler
         this.mouse = new THREE.Vector2();
-        this.raycaster = new THREE.Raycaster();
-        this.targetPositions = []; // Parçacıkların orijinal pozisyonları
-
         this.init();
       }
 
       async init() {
         this.addHeart();
         this.addModel();
-        this.addSnow();
         this.addPostProcessing();
         this.addEvents();
         this.loop();
       }
 
-      // Geliştirilmiş Bloom Efekti (Sinematik Parıltı)
       addPostProcessing() {
         this.composer = new EffectComposer(this.renderer);
         this.composer.addPass(new RenderPass(this.scene, this.camera));
-        const bloomPass = new UnrealBloomPass(
-          new THREE.Vector2(window.innerWidth, window.innerHeight),
-          1.5, // Güç (Strength) - Videodaki gibi parlak
-          0.4, // Yarıçap (Radius)
-          0.85 // Eşik (Threshold) - Sadece parlak noktaları parlat
-        );
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 2.0, 0.5, 0.8);
         this.composer.addPass(bloomPass);
       }
 
       addHeart() {
         this.heartMaterial = new THREE.ShaderMaterial({
+          uniforms: { uTime: { value: 0 }, uSize: { value: 0.5 }, uExplosion: { value: 0 } },
+          vertexShader: `
+            uniform float uTime; uniform float uSize; uniform float uExplosion;
+            attribute float aScale; attribute vec3 aColor; attribute float aSpeed;
+            varying vec3 vColor;
+            void main() {
+              float t = mod(uTime * aSpeed * 0.01, 6.28);
+              vec3 pos = vec3(16.0*pow(sin(t),3.0), (13.0*cos(t)-5.0*cos(2.0*t)-2.0*cos(3.0*t)-cos(4.0*t)), 0.0);
+              pos *= (0.15 + uExplosion); // Patlama Etkisi
+              vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+              gl_PointSize = aScale * uSize * (100.0 / -mvPosition.z);
+              gl_Position = projectionMatrix * mvPosition;
+              vColor = aColor;
+            }
+          `,
           fragmentShader: `
             varying vec3 vColor;
             void main() {
-              float d = distance(gl_PointCoord, vec2(0.5));
-              float str = 0.04 / d - 0.1; // Parlama efekti (Nokta başına)
-              gl_FragColor = vec4(vColor, str);
+              if(length(gl_PointCoord - vec2(0.5)) > 0.5) discard;
+              gl_FragColor = vec4(vColor, 1.0);
             }
           `,
-          vertexShader: document.getElementById("vertexShader").textContent,
-          uniforms: { uTime: { value: 0 }, uSize: { value: 0.4 } },
           transparent: true, blending: THREE.AdditiveBlending, depthWrite: false
         });
 
-        const count = 3000; // Daha fazla parçacık, daha dolgun
         const geo = new THREE.BufferGeometry();
+        const count = 4000;
         const positions = new Float32Array(count * 3);
-        const scales = new Float32Array(count);
         const colors = new Float32Array(count * 3);
-        const randoms = new Float32Array(count);
+        const scales = new Float32Array(count);
         const speeds = new Float32Array(count);
 
-        for (let i = 0; i < count; i++) {
-          scales[i] = Math.random();
-          randoms[i] = Math.random();
-          speeds[i] = Math.random() * 40.0;
-          
-          // Orijinal renkler (Daha neon)
-          const colorChoices = ["#ff0055", "#ff89aC", "#ffffff", "#ff1144"];
-          const color = new THREE.Color(colorChoices[Math.floor(Math.random() * colorChoices.length)]);
-          colors[i*3] = color.r; colors[i*3+1] = color.g; colors[i*3+2] = color.b;
+        for(let i=0; i<count; i++) {
+          scales[i] = Math.random() * 2;
+          speeds[i] = 10 + Math.random() * 30;
+          const col = new THREE.Color(["#ff0055", "#ff89aC", "#ffffff"][Math.floor(Math.random()*3)]);
+          colors[i*3]=col.r; colors[i*3+1]=col.g; colors[i*3+2]=col.b;
         }
-
         geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         geo.setAttribute('aScale', new THREE.BufferAttribute(scales, 1));
         geo.setAttribute('aColor', new THREE.BufferAttribute(colors, 3));
-        geo.setAttribute('random', new THREE.BufferAttribute(randoms, 1));
         geo.setAttribute('aSpeed', new THREE.BufferAttribute(speeds, 1));
 
         this.points = new THREE.Points(geo, this.heartMaterial);
@@ -260,168 +197,85 @@
         const loader = new GLTFLoader();
         loader.load("https://assets.codepen.io/74321/heart.glb", (gltf) => {
           this.model = gltf.scene.children[0];
-          this.model.scale.set(0.01, 0.01, 0.01);
-          // Daha parlak matcap materyali
-          this.model.material = new THREE.MeshPhongMaterial({ color: "#ff2266", emissive: "#ff0044", shininess: 100 });
+          this.model.scale.set(0.35, 0.35, 0.35);
+          this.model.material = new THREE.MeshStandardMaterial({ color: "#ff2266", emissive: "#ff0044" });
           this.scene.add(this.model);
-          
-          // Model için ışıklandırma
-          const light = new THREE.PointLight(0xffffff, 1, 10);
-          light.position.set(0, 0, 2);
-          this.scene.add(light);
-          
-          // Modelin büyüme animasyonu (Daha elastik)
-          new THREE.TextureLoader().load("https://assets.codepen.io/74321/3.png", () => {
-              gsap.to(this.model.scale, { x: 0.35, y: 0.35, z: 0.35, duration: 2, ease: "Elastic.easeOut" });
-          });
         });
       }
 
-      // Geliştirilmiş Dış Saha (Derinlik İçin 'Snow' Olarak Adlandırıldı)
-      addSnow() {
-        this.snowMaterial = new THREE.ShaderMaterial({
-          fragmentShader: `
-            varying vec3 vColor;
-            void main() {
-              float d = distance(gl_PointCoord, vec2(0.5));
-              float str = 0.02 / d - 0.05; // Daha sönük parıltı
-              gl_FragColor = vec4(vColor, str);
-            }
-          `,
-          vertexShader: document.getElementById("vertexShader1").textContent,
-          uniforms: { uTime: { value: 0 }, uSize: { value: 0.3 } },
-          transparent: true, blending: THREE.AdditiveBlending, depthWrite: false
+      spawnMemory() {
+        const word = memories[Math.floor(Math.random() * memories.length)];
+        const el = document.createElement("div");
+        el.className = "memory-bubble";
+        el.textContent = word;
+        el.style.left = Math.random() * 80 + 10 + "%";
+        el.style.top = Math.random() * 60 + 20 + "%";
+        document.body.appendChild(el);
+        
+        gsap.to(el, { 
+          y: -100, opacity: 0, duration: 4, 
+          onComplete: () => el.remove() 
         });
-
-        const count = 600; // Derinlik için daha fazla
-        const geo = new THREE.BufferGeometry();
-        const positions = new Float32Array(count * 3);
-        const scales = new Float32Array(count);
-        const colors = new Float32Array(count * 3);
-        const randoms = new Float32Array(count);
-        const randoms1 = new Float32Array(count);
-        const phis = new Float32Array(count);
-
-        for (let i = 0; i < count; i++) {
-          phis[i] = (Math.random() - 0.5) * 10;
-          scales[i] = Math.random();
-          randoms[i] = Math.random();
-          randoms1[i] = Math.random();
-          // Derinlik için daha sönük renkler
-          const colorChoices = ["#cc0044", "#ffb3c6", "#ff1144", "#33cc33"];
-          const color = new THREE.Color(colorChoices[Math.floor(Math.random() * colorChoices.length)]);
-          colors[i*3] = color.r; colors[i*3+1] = color.g; colors[i*3+2] = color.b;
-        }
-
-        geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        geo.setAttribute('phi', new THREE.BufferAttribute(phis, 1));
-        geo.setAttribute('aScale', new THREE.BufferAttribute(scales, 1));
-        geo.setAttribute('aColor', new THREE.BufferAttribute(colors, 3));
-        geo.setAttribute('random', new THREE.BufferAttribute(randoms, 1));
-        geo.setAttribute('random1', new THREE.BufferAttribute(randoms1, 1));
-
-        this.points1 = new THREE.Points(geo, this.snowMaterial);
-        this.scene.add(this.points1);
       }
 
-      // Typewriter Efekti (Daktilo Yazısı)
-      typewriterEffect() {
-        const text = "Yaşanan her şey için çok pişmanım. Kalbini kırdığım her anın yükünü taşıyorum. Lütfen bu parlayan kristaller gibi saf ve gerçek sevgimize bir şans daha ver. Seni çok seviyorum.";
-        const typewriterEl = document.getElementById("typewriter");
-        let i = 0;
-        const speed = 50; // Harf hızı (ms)
-
-        function type() {
-          if (i < text.length) {
-            typewriterEl.textContent += text.charAt(i);
-            i++;
-            setTimeout(type, speed);
-          }
-        }
-        type();
-      }
-
-      // Orijinal Müzik ve Ses Görselleştirme (Daha Hassas)
-      startMusic() {
-        const listener = new THREE.AudioListener();
-        this.camera.add(listener);
-        this.sound = new THREE.Audio(listener);
-        new THREE.AudioLoader().load("https://assets.codepen.io/74321/ukulele.mp3", (buffer) => {
-          this.sound.setBuffer(buffer);
-          this.sound.setLoop(true);
-          this.sound.play();
-          this.analyser = new THREE.AudioAnalyser(this.sound, 32);
-        });
+      explode() {
+        gsap.to(this.heartMaterial.uniforms.uExplosion, { value: 5, duration: 1, yoyo: true, repeat: 1, ease: "power2.inOut" });
       }
 
       addEvents() {
-        const btn = document.querySelector("button");
-        const note = document.getElementById("note");
+        const btn = document.getElementById("start-btn");
         btn.addEventListener("click", () => {
-          gsap.to(btn, { opacity: 0, duration: 1, onComplete: () => btn.style.display = "none" });
-          note.style.opacity = "1"; // Notu göster
+          gsap.to(btn, { opacity: 0, scale: 0, duration: 1 });
+          document.getElementById("note").style.opacity = "1";
           this.startMusic();
-          this.typewriterEffect(); // Yazıyı daktilo gibi yaz
+          this.typeWriter();
+          this.explode();
+          setInterval(() => this.spawnMemory(), 2500);
         });
 
-        // Mouse Hareketi Takibi (Etkileşim İçin)
         window.addEventListener("mousemove", (e) => {
           this.mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
           this.mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-          
-          // Geliştirilmiş Mouse-Camera Takibi
-          gsap.to(this.camera.position, {
-            x: gsap.utils.mapRange(-1, 1, 0.3, -0.3, this.mouse.x),
-            y: gsap.utils.mapRange(-1, 1, 0.3, -0.3, -this.mouse.y),
-            duration: 0.5
-          });
+          gsap.to(this.camera.position, { x: this.mouse.x * 0.5, y: this.mouse.y * 0.5, duration: 1 });
         });
+      }
 
-        window.addEventListener("resize", () => {
-          this.camera.aspect = window.innerWidth / window.innerHeight;
-          this.camera.updateProjectionMatrix();
-          this.renderer.setSize(window.innerWidth, window.innerHeight);
-          this.composer.setSize(window.innerWidth, window.innerHeight); // Post-processing'i de güncelle
+      startMusic() {
+        const listener = new THREE.AudioListener();
+        this.camera.add(listener);
+        const sound = new THREE.Audio(listener);
+        new THREE.AudioLoader().load("https://assets.codepen.io/74321/ukulele.mp3", (buffer) => {
+          sound.setBuffer(buffer);
+          sound.play();
+          this.analyser = new THREE.AudioAnalyser(sound, 32);
         });
+      }
+
+      typeWriter() {
+        const text = "Her parçacık sana olan sevgimin bir kanıtı. Kalbini kırdığım için çok pişmanım, her şeyi onarmak için buradayım. Lütfen bize bir şans daha ver...";
+        let i = 0;
+        const el = document.getElementById("typewriter");
+        const interval = setInterval(() => {
+          el.textContent += text[i];
+          i++;
+          if(i === text.length) clearInterval(interval);
+        }, 60);
       }
 
       loop() {
         const elapsed = this.clock.getElapsedTime();
         this.heartMaterial.uniforms.uTime.value = elapsed;
-        this.snowMaterial.uniforms.uTime.value = elapsed;
-
-        // Ses Duyarlılığı (Hassas ve Çok Yönlü)
-        if (this.analyser) {
-          this.data = this.analyser.getAverageFrequency() / 100;
-          this.points.rotation.y += 0.01 + this.data * 0.08; // Ritmik dönüş
-          
-          // Sesin şiddetine göre parçacık rengini değiştir
-          this.points.material.uniforms.uSize.value = 0.4 + this.data * 0.2; // Boyut
-          if (this.model) {
-            this.model.scale.setScalar(0.35 + this.data * 0.1); // Model boyutu
-            this.model.material.color.setHSL(0.9, 1, 0.5 + this.data * 0.2); // Renk tonu
-          }
-        }
         
-        if (this.model) {
-            this.model.rotation.y += 0.005;
+        // Kalp Atışı (Pulse)
+        const pulse = Math.sin(elapsed * 4) * 0.05;
+        if(this.model) this.model.scale.setScalar(0.35 + pulse);
+
+        if(this.analyser) {
+          const freq = this.analyser.getAverageFrequency() / 100;
+          this.points.rotation.y += 0.01 + freq * 0.05;
         }
 
-        // Fare Etkileşimi (Mouse Çekimi)
-        if (this.points) {
-          this.raycaster.setFromCamera(this.mouse, this.camera);
-          const intersects = this.raycaster.intersectObject(this.points);
-          
-          const positions = this.points.geometry.attributes.position;
-          for (let i = 0; i < positions.count; i++) {
-              const p = positions.array[i*3];
-              // Parçacıkları mouse'a yaklaştırma (Fizik motoru sadeleştirildi)
-              // if (intersects.length > 0) {} -> Bu kısım karmaşık fizik gerektirir, 
-              // şimdilik sadece mouse-camera takibiyle idare ediyoruz.
-          }
-        }
-
-        this.composer.render(); // renderer.render yerine composer.render
+        this.composer.render();
         requestAnimationFrame(this.loop.bind(this));
       }
     }
