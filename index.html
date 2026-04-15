@@ -7,89 +7,47 @@
   <link rel="stylesheet" href="https://use.typekit.net/trt3ngp.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Dancing+Script:wght@600&display=swap');
-    
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { overflow: hidden; background: #16000a; }
     body { -webkit-font-smoothing: antialiased; color: #ffdada; }
-
-    .webgl { position: fixed; width: 100vw; height: 100vh; top: 0; left: 0; outline: none; z-index: 1; }
+    .h1text { font-family: "Lilita One", sans-serif; font-weight: 100; font-size: 2rem; position: absolute; top: 5vh; width: 100%; text-align: center; z-index: 10; }
+    .webgl { position: fixed; width: 100vw; height: 100vh; top: 0; left: 0; outline: none; }
+    body::before { content: ""; position: absolute; border: 8px solid; inset: 1rem; z-index: 100; pointer-events: none; }
     
-    /* Üst Başlık */
-    .h1text { 
-      font-family: "Lilita One", sans-serif; 
-      font-weight: 100; 
-      font-size: 2rem; 
-      position: absolute; 
-      top: 5vh; 
-      width: 100%; 
-      text-align: center; 
-      z-index: 10; 
-      letter-spacing: 2px;
-    }
-
-    /* Özür Notu Kutusu */
+    /* Özür Notu */
     .message-container {
       position: absolute;
-      bottom: 15vh;
+      bottom: 12vh;
       left: 50%;
       transform: translateX(-50%);
-      width: 80%;
+      width: 85%;
       max-width: 500px;
-      background: rgba(255, 218, 218, 0.1);
-      backdrop-filter: blur(5px);
-      padding: 2rem;
-      border-radius: 20px;
-      border: 1px solid rgba(255, 218, 218, 0.3);
+      background: rgba(22, 0, 10, 0.6);
+      backdrop-filter: blur(8px);
+      padding: 1.5rem;
+      border-radius: 15px;
+      border: 1px solid rgba(255, 137, 172, 0.4);
       text-align: center;
-      z-index: 10;
-      opacity: 0; /* Başlangıçta gizli, müzikle gelecek */
-      transition: opacity 2s ease-in-out;
+      z-index: 105;
+      opacity: 0;
+      transition: opacity 2s ease;
+      pointer-events: none;
     }
+    .message-container h2 { font-family: 'Dancing Script', cursive; font-size: 2.2rem; color: #ff89aC; margin-bottom: 0.5rem; }
+    .message-container p { font-family: sans-serif; font-size: 1rem; line-height: 1.5; color: #ffdada; }
 
-    .message-container h2 {
-      font-family: 'Dancing Script', cursive;
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      color: #ff89aC;
-    }
-
-    .message-container p {
-      font-family: 'sans-serif';
-      line-height: 1.6;
-      font-size: 1.1rem;
-      color: #ffdada;
-    }
-
-    body::before { content: ""; position: absolute; border: 8px solid; inset: 1rem; z-index: 100; pointer-events: none; opacity: 0.5; }
-    
-    button { 
-      position: absolute; 
-      inset: 0; 
-      margin: auto; 
-      height: 12vh; 
-      width: 12vh; 
-      background: rgba(255, 137, 172, 0.2); 
-      border-radius: 50%;
-      color: inherit; 
-      border: 2px solid #ff89aC; 
-      cursor: pointer; 
-      z-index: 101; 
-      transition: all 0.3s;
-    }
-    button:hover { background: rgba(255, 137, 172, 0.4); transform: scale(1.1); }
-    svg { width: 4vh; color: #ff89aC; }
+    button { position: absolute; inset: 0; margin: auto; height: 12vh; width: 12vh; background: transparent; border: none; cursor: pointer; z-index: 110; }
+    svg { width: 3.5vh; }
   </style>
 </head>
 <body>
 
   <canvas class="webgl"></canvas>
-  <h1 class="h1text">HER ŞEYİM İÇİN...</h1>
-
-  <div class="message-container" id="note">
+  <h1 class="h1text">this is for you</h1>
+  
+  <div class="message-container" id="apologyNote">
     <h2>Özür Dilerim...</h2>
-    <p>
-      Yaşanan her şey için gerçekten çok pişmanım. Kalbini kırdığım her anın ağırlığını üzerimde taşıyorum. Seni ve bizi kaybetmek istemiyorum. Lütfen bu kristal kalp gibi, parlayan ve saf sevgimize bir şans daha ver. Seni çok seviyorum.
-    </p>
+    <p>Yaşanan her şey için çok pişmanım. Kalbini kırdığım her an için özür dilerim. Lütfen bu kristal kalp gibi parlayan sevgimize bir şans daha ver. Seni çok seviyorum.</p>
   </div>
 
   <button id="play-music" type="button">
@@ -105,13 +63,15 @@
       float a = pow(t, 2.0) * pow((t - sign * M_PI), 2.0);
       float radius = 0.14;
       vec3 myOffset = vec3(radius *16.0 * pow(sin(t), 2.0) * sin(t), radius * (13.0 * cos(t) - 5.0 * cos(2.0 * t) - 2.0 * cos(3.0 * t) - cos(4.0 * t)), .15*(a*(random1 - .5))*sin(abs(10.0*(sin(.2*uTime + .2*random)))*t));
-      vec4 modelPosition = modelMatrix * vec4(myOffset, 1.0);
+      vec3 displacedPosition = myOffset;
+      vec4 modelPosition = modelMatrix * vec4(displacedPosition.xyz, 1.0);
       vec4 viewPosition = viewMatrix * modelPosition;
       viewPosition.xyz += position * aScale * uSize * pow(a, .5) * .5;
       gl_Position = projectionMatrix * viewPosition;
       vColor = aColor; vUv = uv;
     }
   </script>
+
   <script type="x-shader/x-fragment" id="fragmentShader">
     varying vec3 vColor; varying vec2 vUv;
     void main() {
@@ -119,12 +79,14 @@
       gl_FragColor = vec4(strength * vColor, 1.0);
     }
   </script>
+
   <script type="x-shader/x-vertex" id="vertexShader1">
     #define M_PI 3.1415926535897932384626433832795
     uniform float uTime; uniform float uSize; attribute float aScale; attribute vec3 aColor; attribute float phi; attribute float random; attribute float random1; varying vec3 vColor; varying vec2 vUv;
     void main() {
+      float angle = phi;
       float t = mod((-uTime + 100.0) * 0.06* random1 + random *2.0 * M_PI , 2.0 * M_PI);
-      vec3 myOffset = vec3(5.85*cos(phi * t), 2.0*(t - M_PI), 3.0*sin(phi * t/t));
+      vec3 myOffset = vec3(5.85*cos(angle * (t )), 2.0*(t - M_PI), 3.0*sin(angle * (t )/t));
       vec4 modelPosition = modelMatrix * vec4(myOffset, 1.0);
       vec4 viewPosition = viewMatrix * modelPosition;
       viewPosition.xyz += position * aScale * uSize;
@@ -132,12 +94,13 @@
       vColor = aColor; vUv = uv;
     }
   </script>
+
   <script type="x-shader/x-fragment" id="fragmentShader1">
     uniform sampler2D uTex; varying vec3 vColor; varying vec2 vUv;
     void main() {
       float strength = 1.0 - (distance(vUv, vec2(0.5, .65)) * 2.0);
-      vec3 tex = texture2D(uTex, vUv).rgb;
-      gl_FragColor = vec4(tex * vColor * (strength + .3), 1.);
+      vec3 texture = texture2D(uTex, vUv).rgb;
+      gl_FragColor = vec4(texture * vColor * (strength + .3), 1.);
     }
   </script>
 
@@ -146,12 +109,17 @@
     import { gsap } from "https://cdn.skypack.dev/gsap@3.8.0";
     import { GLTFLoader } from "https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/GLTFLoader";
 
+    // Orijinal script.js içeriği (Düzenlenmiş ve entegre edilmiş)
     class World {
       constructor({ canvas, cameraPosition }) {
-        this.parameters = { count: 1500, max: 12.5 * Math.PI };
+        this.parameters = { count: 1500, max: 12.5 * Math.PI, a: 2, c: 4.5 };
+        this.textureLoader = new THREE.TextureLoader();
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0x16000a);
         this.clock = new THREE.Clock();
+        this.data = 0;
+        this.time = { current: 0, t0: 0, t1: 0, t: 0, frequency: 0.0005 };
+        this.angle = { x: 0, z: 0 };
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
         this.camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
         this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -161,46 +129,66 @@
         this.addToScene();
         this.addButton();
         this.listenToResize();
+        this.listenToMouseMove();
       }
 
       loop() {
-        if (this.heartMaterial) this.heartMaterial.uniforms.uTime.value += 0.01;
-        if (this.model) this.model.rotation.y -= 0.005;
+        this.time.elapsed = this.clock.getElapsedTime();
+        this.time.delta = Math.min(60, (this.time.elapsed - this.time.current) * 1000);
+
+        if (this.analyser && this.isRunning) {
+          this.time.t = this.time.elapsed - this.time.t0 + this.time.t1;
+          this.data = this.analyser.getAverageFrequency();
+          this.data *= this.data / 2000;
+          this.angle.x += this.time.delta * 0.001 * 0.63;
+          this.angle.z += this.time.delta * 0.001 * 0.39;
+          
+          if (this.isRunning && !this.sound.isPlaying) {
+            this.time.t1 = this.time.t; this.audioBtn.disabled = false; this.isRunning = false;
+            gsap.to(this.camera.position, { x: 0, z: 4.5, duration: 4, ease: "expo.in" });
+            gsap.to(this.audioBtn, { opacity: 1, duration: 1 });
+          } else {
+            this.camera.position.x = Math.sin(this.angle.x) * this.parameters.a;
+            this.camera.position.z = Math.min(Math.max(Math.cos(this.angle.z) * this.parameters.c, 1.75), 6.5);
+          }
+        }
+
+        this.camera.lookAt(this.scene.position);
+        if (this.heartMaterial) this.heartMaterial.uniforms.uTime.value += this.time.delta * this.time.frequency * (1 + this.data * 0.2);
+        if (this.model) this.model.rotation.y -= 0.0005 * this.time.delta * (1 + this.data);
+        if (this.snowMaterial) this.snowMaterial.uniforms.uTime.value += this.time.delta * 0.0004 * (1 + this.data);
+        
         this.renderer.render(this.scene, this.camera);
+        this.time.current = this.time.elapsed;
         requestAnimationFrame(this.loop.bind(this));
       }
 
-      addToScene() {
-        this.addHeart();
-        this.addModel();
-      }
+      addToScene() { this.addModel(); this.addHeart(); this.addSnow(); }
 
       addHeart() {
         this.heartMaterial = new THREE.ShaderMaterial({
           fragmentShader: document.getElementById("fragmentShader").textContent,
           vertexShader: document.getElementById("vertexShader").textContent,
-          uniforms: { uTime: { value: 0 }, uSize: { value: 0.2 }, uTex: { value: new THREE.TextureLoader().load("https://assets.codepen.io/74321/heart.png") } },
+          uniforms: { uTime: { value: 0 }, uSize: { value: 0.2 }, uTex: { value: this.textureLoader.load("https://assets.codepen.io/74321/heart.png") } },
           depthWrite: false, blending: THREE.AdditiveBlending, transparent: true
         });
-        const geo = new THREE.InstancedBufferGeometry().copy(new THREE.PlaneGeometry(1, 1));
         const count = this.parameters.count;
-        const scales = new Float32Array(count);
-        const colors = new Float32Array(count * 3);
-        const randoms = new Float32Array(count);
-        const speeds = new Float32Array(count);
-        const colorChoices = ["white", "red", "pink", "crimson"];
+        const geo = new THREE.InstancedBufferGeometry().copy(new THREE.PlaneGeometry(1, 1));
+        const scales = new Float32Array(count); const colors = new Float32Array(count * 3);
+        const speeds = new Float32Array(count); const randoms = new Float32Array(count); const randoms1 = new Float32Array(count);
+        const colorChoices = ["white", "red", "pink", "crimson", "hotpink", "green"];
+
         for (let i = 0; i < count; i++) {
-          scales[i] = Math.random() * 0.35;
+          randoms[i] = Math.random(); randoms1[i] = Math.random(); scales[i] = Math.random() * 0.35;
           const c = new THREE.Color(colorChoices[Math.floor(Math.random() * colorChoices.length)]);
           colors[i*3] = c.r; colors[i*3+1] = c.g; colors[i*3+2] = c.b;
-          randoms[i] = Math.random();
           speeds[i] = Math.random() * this.parameters.max;
         }
-        geo.setAttribute("aScale", new THREE.InstancedBufferAttribute(scales, 1));
-        geo.setAttribute("aColor", new THREE.InstancedBufferAttribute(colors, 3));
         geo.setAttribute("random", new THREE.InstancedBufferAttribute(randoms, 1));
-        geo.setAttribute("random1", new THREE.InstancedBufferAttribute(randoms, 1));
+        geo.setAttribute("random1", new THREE.InstancedBufferAttribute(randoms1, 1));
+        geo.setAttribute("aScale", new THREE.InstancedBufferAttribute(scales, 1));
         geo.setAttribute("aSpeed", new THREE.InstancedBufferAttribute(speeds, 1));
+        geo.setAttribute("aColor", new THREE.InstancedBufferAttribute(colors, 3));
         this.scene.add(new THREE.Mesh(geo, this.heartMaterial));
       }
 
@@ -208,31 +196,62 @@
         const loader = new GLTFLoader();
         loader.load("https://assets.codepen.io/74321/heart.glb", (gltf) => {
           this.model = gltf.scene.children[0];
-          this.model.scale.set(0.35, 0.35, 0.35);
-          this.model.material = new THREE.MeshMatcapMaterial({ color: "#ff89aC" });
+          this.model.scale.set(0.01, 0.01, 0.01);
+          this.model.material = new THREE.MeshMatcapMaterial({ 
+            matcap: this.textureLoader.load("https://assets.codepen.io/74321/3.png", () => {
+              gsap.to(this.model.scale, { x: 0.35, y: 0.35, z: 0.35, duration: 1.5, ease: "Elastic.easeOut" });
+            }), color: "#ff89aC" 
+          });
           this.scene.add(this.model);
         });
       }
 
+      addSnow() {
+        this.snowMaterial = new THREE.ShaderMaterial({
+          fragmentShader: document.getElementById("fragmentShader1").textContent,
+          vertexShader: document.getElementById("vertexShader1").textContent,
+          uniforms: { uTime: { value: 0 }, uSize: { value: 0.3 }, uTex: { value: this.textureLoader.load("https://assets.codepen.io/74321/heart.png") } },
+          depthWrite: false, blending: THREE.AdditiveBlending, transparent: true
+        });
+        const count = 550; const geo = new THREE.InstancedBufferGeometry().copy(new THREE.PlaneGeometry(1, 1));
+        const phis = new Float32Array(count); const randoms = new Float32Array(count); const randoms1 = new Float32Array(count);
+        const scales = new Float32Array(count); const colors = new Float32Array(count * 3);
+        for (let i = 0; i < count; i++) {
+          phis[i] = (Math.random() - 0.5) * 10; randoms[i] = Math.random(); randoms1[i] = Math.random(); scales[i] = Math.random() * 0.35;
+          const c = new THREE.Color(["red", "pink", "hotpink", "green"][Math.floor(Math.random()*4)]);
+          colors[i*3] = c.r; colors[i*3+1] = c.g; colors[i*3+2] = c.b;
+        }
+        geo.setAttribute("phi", new THREE.InstancedBufferAttribute(phis, 1));
+        geo.setAttribute("random", new THREE.InstancedBufferAttribute(randoms, 1));
+        geo.setAttribute("random1", new THREE.InstancedBufferAttribute(randoms1, 1));
+        geo.setAttribute("aScale", new THREE.InstancedBufferAttribute(scales, 1));
+        geo.setAttribute("aColor", new THREE.InstancedBufferAttribute(colors, 3));
+        this.scene.add(new THREE.Mesh(geo, this.snowMaterial));
+      }
+
       addButton() {
-        const btn = document.querySelector("button");
-        const note = document.getElementById("note");
-        btn.addEventListener("click", () => {
-          gsap.to(btn, { opacity: 0, duration: 1, onComplete: () => btn.style.display = "none" });
-          note.style.opacity = "1"; // Müzik başlayınca notu göster
-          this.loadMusic();
+        this.audioBtn = document.querySelector("button");
+        this.audioBtn.addEventListener("click", () => {
+          this.audioBtn.disabled = true;
+          if (this.analyser) {
+            this.sound.play(); this.time.t0 = this.time.elapsed; this.isRunning = true;
+            gsap.to(this.audioBtn, { opacity: 0, duration: 1 });
+          } else {
+            this.loadMusic();
+          }
+          // Notu göster
+          document.getElementById("apologyNote").style.opacity = "1";
         });
       }
 
       loadMusic() {
-        const listener = new THREE.AudioListener();
-        this.camera.add(listener);
-        const sound = new THREE.Audio(listener);
-        const audioLoader = new THREE.AudioLoader();
-        audioLoader.load("https://assets.codepen.io/74321/ukulele.mp3", (buffer) => {
-          sound.setBuffer(buffer);
-          sound.setVolume(0.5);
-          sound.play();
+        const listener = new THREE.AudioListener(); this.camera.add(listener);
+        this.sound = new THREE.Audio(listener);
+        new THREE.AudioLoader().load("https://assets.codepen.io/74321/ukulele.mp3", (buffer) => {
+          this.sound.setBuffer(buffer); this.sound.play();
+          this.analyser = new THREE.AudioAnalyser(this.sound, 32);
+          this.isRunning = true; this.time.t0 = this.time.elapsed;
+          gsap.to(this.audioBtn, { opacity: 0, duration: 1 });
         });
       }
 
@@ -241,6 +260,14 @@
           this.camera.aspect = window.innerWidth / window.innerHeight;
           this.camera.updateProjectionMatrix();
           this.renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+      }
+      listenToMouseMove() {
+        window.addEventListener("mousemove", (e) => {
+          gsap.to(this.camera.position, {
+            x: gsap.utils.mapRange(0, window.innerWidth, 0.2, -0.2, e.clientX),
+            y: gsap.utils.mapRange(0, window.innerHeight, 0.2, -0.2, -e.clientY)
+          });
         });
       }
     }
