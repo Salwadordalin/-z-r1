@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Senin İçin...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://use.typekit.net/trt3ngp.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Dancing+Script:wght@600&display=swap');
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { overflow: hidden; background: #16000a; }
+    body { -webkit-font-smoothing: antialiased; color: #ffdada; }
+
+    .webgl { position: fixed; width: 100vw; height: 100vh; top: 0; left: 0; outline: none; z-index: 1; }
+    
+    /* Üst Başlık */
+    .h1text { 
+      font-family: "Lilita One", sans-serif; 
+      font-weight: 100; 
+      font-size: 2rem; 
+      position: absolute; 
+      top: 5vh; 
+      width: 100%; 
+      text-align: center; 
+      z-index: 10; 
+      letter-spacing: 2px;
+    }
+
+    /* Özür Notu Kutusu */
+    .message-container {
+      position: absolute;
+      bottom: 15vh;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      max-width: 500px;
+      background: rgba(255, 218, 218, 0.1);
+      backdrop-filter: blur(5px);
+      padding: 2rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 218, 218, 0.3);
+      text-align: center;
+      z-index: 10;
+      opacity: 0; /* Başlangıçta gizli, müzikle gelecek */
+      transition: opacity 2s ease-in-out;
+    }
+
+    .message-container h2 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #ff89aC;
+    }
+
+    .message-container p {
+      font-family: 'sans-serif';
+      line-height: 1.6;
+      font-size: 1.1rem;
+      color: #ffdada;
+    }
+
+    body::before { content: ""; position: absolute; border: 8px solid; inset: 1rem; z-index: 100; pointer-events: none; opacity: 0.5; }
+    
+    button { 
+      position: absolute; 
+      inset: 0; 
+      margin: auto; 
+      height: 12vh; 
+      width: 12vh; 
+      background: rgba(255, 137, 172, 0.2); 
+      border-radius: 50%;
+      color: inherit; 
+      border: 2px solid #ff89aC; 
+      cursor: pointer; 
+      z-index: 101; 
+      transition: all 0.3s;
+    }
+    button:hover { background: rgba(255, 137, 172, 0.4); transform: scale(1.1); }
+    svg { width: 4vh; color: #ff89aC; }
+  </style>
+</head>
+<body>
+
+  <canvas class="webgl"></canvas>
+  <h1 class="h1text">HER ŞEYİM İÇİN...</h1>
+
+  <div class="message-container" id="note">
+    <h2>Özür Dilerim...</h2>
+    <p>
+      Yaşanan her şey için gerçekten çok pişmanım. Kalbini kırdığım her anın ağırlığını üzerimde taşıyorum. Seni ve bizi kaybetmek istemiyorum. Lütfen bu kristal kalp gibi, parlayan ve saf sevgimize bir şans daha ver. Seni çok seviyorum.
+    </p>
+  </div>
+
+  <button id="play-music" type="button">
+    <svg fill="currentColor" viewBox="0 0 512 512"><path d="M470.38 1.51L150.41 96A32 32 0 0 0 128 126.51v261.41A139 139 0 0 0 96 384c-53 0-96 28.66-96 64s43 64 96 64 96-28.66 96-64V214.32l256-75v184.61a138.4 138.4 0 0 0-32-3.93c-53 0-96 28.66-96 64s43 64 96 64 96-28.65 96-64V32a32 32 0 0 0-41.62-30.49z"/></svg>
+  </button>
+
+  <script type="x-shader/x-vertex" id="vertexShader">
+    #define M_PI 3.1415926535897932384626433832795
+    uniform float uTime; uniform float uSize; attribute float aScale; attribute vec3 aColor; attribute float random; attribute float random1; attribute float aSpeed; varying vec3 vColor; varying vec2 vUv;
+    void main() {
+      float sign = 2.0* (step(random, 0.5) -.5);
+      float t = sign*mod(-uTime * aSpeed* 0.005  + 10.0*aSpeed*aSpeed, M_PI);
+      float a = pow(t, 2.0) * pow((t - sign * M_PI), 2.0);
+      float radius = 0.14;
+      vec3 myOffset = vec3(radius *16.0 * pow(sin(t), 2.0) * sin(t), radius * (13.0 * cos(t) - 5.0 * cos(2.0 * t) - 2.0 * cos(3.0 * t) - cos(4.0 * t)), .15*(a*(random1 - .5))*sin(abs(10.0*(sin(.2*uTime + .2*random)))*t));
+      vec4 modelPosition = modelMatrix * vec4(myOffset, 1.0);
+      vec4 viewPosition = viewMatrix * modelPosition;
+      viewPosition.xyz += position * aScale * uSize * pow(a, .5) * .5;
+      gl_Position = projectionMatrix * viewPosition;
+      vColor = aColor; vUv = uv;
+    }
+  </script>
+  <script type="x-shader/x-fragment" id="fragmentShader">
+    varying vec3 vColor; varying vec2 vUv;
+    void main() {
+      float strength = 1.0 - (distance(vUv, vec2(0.5)) * 2.0);
+      gl_FragColor = vec4(strength * vColor, 1.0);
+    }
+  </script>
+  <script type="x-shader/x-vertex" id="vertexShader1">
+    #define M_PI 3.1415926535897932384626433832795
+    uniform float uTime; uniform float uSize; attribute float aScale; attribute vec3 aColor; attribute float phi; attribute float random; attribute float random1; varying vec3 vColor; varying vec2 vUv;
+    void main() {
+      float t = mod((-uTime + 100.0) * 0.06* random1 + random *2.0 * M_PI , 2.0 * M_PI);
+      vec3 myOffset = vec3(5.85*cos(phi * t), 2.0*(t - M_PI), 3.0*sin(phi * t/t));
+      vec4 modelPosition = modelMatrix * vec4(myOffset, 1.0);
+      vec4 viewPosition = viewMatrix * modelPosition;
+      viewPosition.xyz += position * aScale * uSize;
+      gl_Position = projectionMatrix * viewPosition;
+      vColor = aColor; vUv = uv;
+    }
+  </script>
+  <script type="x-shader/x-fragment" id="fragmentShader1">
+    uniform sampler2D uTex; varying vec3 vColor; varying vec2 vUv;
+    void main() {
+      float strength = 1.0 - (distance(vUv, vec2(0.5, .65)) * 2.0);
+      vec3 tex = texture2D(uTex, vUv).rgb;
+      gl_FragColor = vec4(tex * vColor * (strength + .3), 1.);
+    }
+  </script>
+
+  <script type="module">
+    import * as THREE from "https://cdn.skypack.dev/three@0.135.0";
+    import { gsap } from "https://cdn.skypack.dev/gsap@3.8.0";
+    import { GLTFLoader } from "https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/GLTFLoader";
+
+    class World {
+      constructor({ canvas, cameraPosition }) {
+        this.parameters = { count: 1500, max: 12.5 * Math.PI };
+        this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0x16000a);
+        this.clock = new THREE.Clock();
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+        this.camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+        this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        
+        this.addToScene();
+        this.addButton();
+        this.listenToResize();
+      }
+
+      loop() {
+        if (this.heartMaterial) this.heartMaterial.uniforms.uTime.value += 0.01;
+        if (this.model) this.model.rotation.y -= 0.005;
+        this.renderer.render(this.scene, this.camera);
+        requestAnimationFrame(this.loop.bind(this));
+      }
+
+      addToScene() {
+        this.addHeart();
+        this.addModel();
+      }
+
+      addHeart() {
+        this.heartMaterial = new THREE.ShaderMaterial({
+          fragmentShader: document.getElementById("fragmentShader").textContent,
+          vertexShader: document.getElementById("vertexShader").textContent,
+          uniforms: { uTime: { value: 0 }, uSize: { value: 0.2 }, uTex: { value: new THREE.TextureLoader().load("https://assets.codepen.io/74321/heart.png") } },
+          depthWrite: false, blending: THREE.AdditiveBlending, transparent: true
+        });
+        const geo = new THREE.InstancedBufferGeometry().copy(new THREE.PlaneGeometry(1, 1));
+        const count = this.parameters.count;
+        const scales = new Float32Array(count);
+        const colors = new Float32Array(count * 3);
+        const randoms = new Float32Array(count);
+        const speeds = new Float32Array(count);
+        const colorChoices = ["white", "red", "pink", "crimson"];
+        for (let i = 0; i < count; i++) {
+          scales[i] = Math.random() * 0.35;
+          const c = new THREE.Color(colorChoices[Math.floor(Math.random() * colorChoices.length)]);
+          colors[i*3] = c.r; colors[i*3+1] = c.g; colors[i*3+2] = c.b;
+          randoms[i] = Math.random();
+          speeds[i] = Math.random() * this.parameters.max;
+        }
+        geo.setAttribute("aScale", new THREE.InstancedBufferAttribute(scales, 1));
+        geo.setAttribute("aColor", new THREE.InstancedBufferAttribute(colors, 3));
+        geo.setAttribute("random", new THREE.InstancedBufferAttribute(randoms, 1));
+        geo.setAttribute("random1", new THREE.InstancedBufferAttribute(randoms, 1));
+        geo.setAttribute("aSpeed", new THREE.InstancedBufferAttribute(speeds, 1));
+        this.scene.add(new THREE.Mesh(geo, this.heartMaterial));
+      }
+
+      async addModel() {
+        const loader = new GLTFLoader();
+        loader.load("https://assets.codepen.io/74321/heart.glb", (gltf) => {
+          this.model = gltf.scene.children[0];
+          this.model.scale.set(0.35, 0.35, 0.35);
+          this.model.material = new THREE.MeshMatcapMaterial({ color: "#ff89aC" });
+          this.scene.add(this.model);
+        });
+      }
+
+      addButton() {
+        const btn = document.querySelector("button");
+        const note = document.getElementById("note");
+        btn.addEventListener("click", () => {
+          gsap.to(btn, { opacity: 0, duration: 1, onComplete: () => btn.style.display = "none" });
+          note.style.opacity = "1"; // Müzik başlayınca notu göster
+          this.loadMusic();
+        });
+      }
+
+      loadMusic() {
+        const listener = new THREE.AudioListener();
+        this.camera.add(listener);
+        const sound = new THREE.Audio(listener);
+        const audioLoader = new THREE.AudioLoader();
+        audioLoader.load("https://assets.codepen.io/74321/ukulele.mp3", (buffer) => {
+          sound.setBuffer(buffer);
+          sound.setVolume(0.5);
+          sound.play();
+        });
+      }
+
+      listenToResize() {
+        window.addEventListener("resize", () => {
+          this.camera.aspect = window.innerWidth / window.innerHeight;
+          this.camera.updateProjectionMatrix();
+          this.renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+      }
+    }
+
+    const world = new World({ canvas: document.querySelector("canvas.webgl"), cameraPosition: { x: 0, y: 0, z: 4.5 } });
+    world.loop();
+  </script>
+</body>
+</html>
